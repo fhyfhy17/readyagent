@@ -11,15 +11,20 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 public class Hot {
 
-    public static void agentmain(String agentArgs, Instrumentation inst) {
-        reload(inst);
+    private static Instrumentation instrumentation;
+    public static void agentmain(String agentArgs, Instrumentation instrumentation) {
+        Hot.instrumentation = instrumentation;
     }
 
-    private static void reload(Instrumentation instrumentation) {
+    public static void reload() {
+        if(Objects.isNull(instrumentation)){
+            log.error("热更新 未加载 agent");
+        }
         log.info("热更新 开始");
         String path = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "hot";
         List<File> list = FileUtil.getFiles(path, ".class");
